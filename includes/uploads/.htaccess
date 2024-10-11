@@ -1,0 +1,9 @@
+# Habilitar el listado de directorios
+Options +Indexes
+
+# Deshabilitar la ejecución de scripts PHP
+RemoveHandler .php
+RemoveType .php
+
+# Tratar archivos .php como texto plano
+AddType text/plain .php
