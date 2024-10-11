@@ -13,21 +13,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $fileType = $_FILES['file']['type'];
 
         // Sanitizar el nombre del archivo para evitar problemas de seguridad
-        $fileNameCmps = pathinfo($fileName);
-        $fileExtension = $fileNameCmps['extension'];
+        $fileName = basename($fileName);
+        $fileName = str_replace(" ", "_", $fileName); // Reemplazar espacios por guiones bajos
+        $fileName = preg_replace("/[^A-Za-z0-9_\-\.]/", '', $fileName); // Eliminar caracteres especiales
 
-        // Generar un nombre único para evitar colisiones
-        $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
+        // Ruta completa del archivo de destino
+        $dest_path = $uploadDir . $fileName;
 
         // Verificar que el directorio de subida exista, si no, crearlo
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
 
-        // Ruta completa del archivo de destino
-        $dest_path = $uploadDir . $newFileName;
-
-        // Mover el archivo subido al directorio de destino
+        // Mover el archivo subido al directorio de destino (sobrescribir si existe)
         if (move_uploaded_file($fileTmpPath, $dest_path)) {
             $message = 'Archivo subido exitosamente.';
         } else {
@@ -46,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Subir Archivo Secreto</title>
+    <title>Subir Archivo</title>
 </head>
 <body>
     <h1>Subir Archivo</h1>
