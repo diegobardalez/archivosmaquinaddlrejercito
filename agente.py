@@ -7,7 +7,8 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 # Ruta del archivo de logs de Apache
-LOG_FILE = '/var/log/apache2/access.log'  # Cambia esta ruta si es necesario
+#LOG_FILE = '/var/log/apache2/access.log'  # Cambia esta ruta si es necesario
+LOG_FILE = '/home/bitnami/stack/apache2/logs'
 
 # URL del servidor Flask
 SERVER_URL = 'http://0.tcp.sa.ngrok.io:10237/alert'
