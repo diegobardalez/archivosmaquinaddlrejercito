@@ -3,15 +3,16 @@
 import requests
 import re
 from time import sleep
+from urllib.parse import unquote
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 # Ruta del archivo de logs de Apache
 #LOG_FILE = '/var/log/apache2/access.log'  # Cambia esta ruta si es necesario
-LOG_FILE = '/home/bitnami/stack/apache2/logs'
+LOG_FILE = '/home/bitnami/stack/apache2/logs/access_log'
 
 # URL del servidor Flask
-SERVER_URL = 'http://0.tcp.sa.ngrok.io:10237/alert'
+SERVER_URL = 'http://localhost:5000/alert'
 
 # Patrón regex para detectar posibles inyecciones SQL
 SQL_INJECTION_PATTERNS = [
@@ -36,9 +37,18 @@ class LogHandler(FileSystemEventHandler):
         for pattern in SQL_INJECTION_PATTERNS:
             if re.search(pattern, line, re.IGNORECASE):
                 # Extraer la IP y la solicitud
+                parts = line.split('"')
+                if len(parts) > 1:
+                    request = parts[1]  # Método y URL solicitada
+                    method, url, protocol = request.split(' ')
+                    url = unquote(url)  # Decodificar la URL
+                else:
+                    url = 'N/A'
+
                 ip = line.split(' ')[0]
                 alert = {
                     'ip': ip,
+                    'url': url,
                     'message': 'Posible ataque de SQL Injection detectado.'
                 }
                 # Enviar la alerta al servidor
